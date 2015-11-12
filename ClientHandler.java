@@ -9,16 +9,18 @@ import java.util.Scanner;
 
 public class ClientHandler extends Thread
 {
+	private AuctionServer server;
 	private Socket client;
 	private Scanner input;
 	private PrintWriter output;
 	private ObjectInputStream inStream;
 	private ObjectOutputStream outstream;
 	
-	public ClientHandler(Socket socket)
+	public ClientHandler(Socket socket, AuctionServer server)
 	{
 		client = socket;
-		System.out.println("Create ClientHandeler");
+		this.server = server;
+
 //		try
 //		{
 //			input = new Scanner(client.getInputStream());

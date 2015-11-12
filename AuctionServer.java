@@ -59,7 +59,7 @@ public class AuctionServer implements Runnable
 	
 	private void addThread(Socket socket)
 	{
-		clientList.add(new ClientHandler(socket));
+		clientList.add(new ClientHandler(socket, this));
 		
 		clientList.get(clientList.size() - 1).start();
 	}
