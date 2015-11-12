@@ -39,16 +39,12 @@ public class AuctionClient
 		{
 			socket = new Socket(host, port);
 			
-			System.out.println("Connection Made");
-			
 			//Scanner auctionInput = new Scanner(socket.getInputStream());
 			//PrintWriter AuctionOutput = new PrintWriter(socket.getOutputStream(), true);
 			
 			ObjectInputStream inStream = new ObjectInputStream(socket.getInputStream());
 			
-			//Scanner userEntry = new Scanner(System.in);
-			
-			System.out.println("Before first loop");
+			Scanner userEntry = new Scanner(System.in);
 			
 			//TODO Parse info between server and client
 			do
