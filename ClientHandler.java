@@ -23,7 +23,6 @@ public class ClientHandler extends Thread
 
 		try
 		{
-			System.out.println("Create new DataInStream");
 			input = new DataInputStream(new BufferedInputStream(client.getInputStream()));
 			//output = new PrintWriter(client.getOutputStream(), true);
 		} 
@@ -35,7 +34,6 @@ public class ClientHandler extends Thread
 		
 		try
 		{
-			System.out.println("Create new objectOutStream");
 			outstream = new ObjectOutputStream(client.getOutputStream());
 		}
 		catch (IOException e)
@@ -54,19 +52,19 @@ public class ClientHandler extends Thread
 			try
 			{
 				server.newBid(input.readUTF());
-				int sleepTime = (int)(Math.random() * 3000);
-				Thread.sleep(sleepTime);
+//				int sleepTime = (int)(Math.random() * 3000);
+//				Thread.sleep(sleepTime);
 			}
 			catch (IOException e)
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			catch (InterruptedException iEx)
-			{
-				// TODO Auto-generated catch block
-				iEx.printStackTrace();
-			}
+//			catch (InterruptedException iEx)
+//			{
+//				// TODO Auto-generated catch block
+//				iEx.printStackTrace();
+//			}
 			
 			
 		}

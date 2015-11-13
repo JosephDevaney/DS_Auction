@@ -51,7 +51,7 @@ public class AuctionServer implements Runnable
 			{
 				addThread(serverSock.accept());
 				int sleepTime = (int)(Math.random() * 3000);
-				Thread.sleep(sleepTime);
+//				Thread.sleep(sleepTime);
 			}
 			catch (IOException e)
 			{
@@ -59,11 +59,11 @@ public class AuctionServer implements Runnable
 				System.out.println("Server accept error" + e);
 				stop();
 			}
-			catch (InterruptedException iEx)
-			{
-				// TODO Auto-generated catch block
-				iEx.printStackTrace();
-			}
+//			catch (InterruptedException iEx)
+//			{
+//				// TODO Auto-generated catch block
+//				iEx.printStackTrace();
+//			}
 			
 			if (clientList.size() == 2 && startAuction)
 			{
@@ -85,6 +85,7 @@ public class AuctionServer implements Runnable
 	
 	public void newAuctionItem()
 	{
+		System.out.println("New Item!!!!");
 		curItem = AuctionItem.getCurrentItem();
 		for (ClientHandler ch : clientList)
 		{

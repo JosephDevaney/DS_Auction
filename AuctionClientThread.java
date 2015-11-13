@@ -30,18 +30,22 @@ public class AuctionClientThread extends Thread
 	
 	public void run()
 	{
-		try
+		while (client != null)
 		{
-			client.displayItemInfo((AuctionItem) inStream.readObject());
-		}
-		catch (ClassNotFoundException cnfEx)
-		{
-			// TODO Auto-generated catch block
-			cnfEx.printStackTrace();
-		}
-		catch (IOException ioEx)
-		{
-			ioEx.printStackTrace();
+			
+			try
+			{
+				client.displayItemInfo((AuctionItem) inStream.readObject());
+			}
+			catch (ClassNotFoundException cnfEx)
+			{
+				// TODO Auto-generated catch block
+				cnfEx.printStackTrace();
+			}
+			catch (IOException ioEx)
+			{
+				ioEx.printStackTrace();
+			}
 		}
 	}
 }
