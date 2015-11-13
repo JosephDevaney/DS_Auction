@@ -102,6 +102,7 @@ public class ClientHandler extends Thread
 		{
 			outstream.writeObject(item);
 			outstream.flush();
+			outstream.reset();
 		}
 		catch (IOException e)
 		{

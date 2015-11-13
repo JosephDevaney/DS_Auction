@@ -30,12 +30,15 @@ public class AuctionClientThread extends Thread
 	
 	public void run()
 	{
+		AuctionItem item = null;
 		while (client != null)
 		{
 			
 			try
 			{
-				client.displayItemInfo((AuctionItem) inStream.readObject());
+				item = (AuctionItem) inStream.readObject();
+				System.out.println("Bid = " + item.getCurrentBid());
+				client.displayItemInfo(item);
 			}
 			catch (ClassNotFoundException cnfEx)
 			{

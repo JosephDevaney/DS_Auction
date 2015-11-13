@@ -100,7 +100,7 @@ public class AuctionServer implements Runnable
 	
 	public void newBid(String bidStr)
 	{
-		int bid = Integer.parseInt(bidStr);
+		double bid = Double.parseDouble(bidStr);
 		if (bid > curItem.getCurrentBid())
 		{
 			curItem.setCurrentBid(bid);
@@ -114,7 +114,7 @@ public class AuctionServer implements Runnable
 		// TODO Auto-generated method stub
 		
 		AuctionItem[] items = { new AuctionItem("Shoe", 100.00), new AuctionItem("Tie", 85.00) };
-
+		items[0].setCurrentBid(15.00d);
 		AuctionServer server = new AuctionServer();
 
 	}
