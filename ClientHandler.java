@@ -15,6 +15,7 @@ public class ClientHandler extends Thread
 	private PrintWriter output;
 	private ObjectInputStream inStream;
 	private ObjectOutputStream outstream;
+	private Thread thread = null;
 	
 	public ClientHandler(Socket socket, AuctionServer server)
 	{
@@ -34,11 +35,8 @@ public class ClientHandler extends Thread
 		
 		try
 		{
-			System.out.println("Trying to create streams!");
-			//inStream = new ObjectInputStream(client.getInputStream());
 			outstream = new ObjectOutputStream(client.getOutputStream());
-			
-			System.out.println("Created streams!");
+			//inStream = new ObjectInputStream(client.getInputStream());
 		}
 		catch (IOException e)
 		{
@@ -49,8 +47,9 @@ public class ClientHandler extends Thread
 	
 	public void run()
 	{
+		//thread = new Thread(this);
 		AuctionItem item = null;
-		System.out.println("ClientHandler - run()");
+
 		item = AuctionItem.getCurrentItem();
 		try
 		{
@@ -73,4 +72,5 @@ public class ClientHandler extends Thread
 		}
 		
 	}
+	
 }

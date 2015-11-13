@@ -9,6 +9,8 @@ public class AuctionServer implements Runnable
 	private static final int port = 1234;
 	private static ArrayList<ClientHandler> clientList;
 	private Thread thread = null;
+	private boolean startAuction = true;
+	private AuctionHandler aHandler;
 
 	public AuctionServer()
 	{
@@ -54,6 +56,13 @@ public class AuctionServer implements Runnable
 				System.out.println("Server accept error" + e);
 				stop();
 			}
+			
+			if (clientList.size() == 2 && startAuction)
+			{
+				aHandler = new AuctionHandler(this);
+				aHandler.start();
+				startAuction = false;
+			}
 		}
 	}
 	
@@ -62,6 +71,11 @@ public class AuctionServer implements Runnable
 		clientList.add(new ClientHandler(socket, this));
 		
 		clientList.get(clientList.size() - 1).start();
+	}
+	
+	public void newAuctionItem()
+	{
+		
 	}
 	
 	public static void main(String[] args) throws IOException
