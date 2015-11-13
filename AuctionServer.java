@@ -50,12 +50,19 @@ public class AuctionServer implements Runnable
 			try
 			{
 				addThread(serverSock.accept());
+				int sleepTime = (int)(Math.random() * 3000);
+				Thread.sleep(sleepTime);
 			}
 			catch (IOException e)
 			{
 				// TODO Auto-generated catch block
 				System.out.println("Server accept error" + e);
 				stop();
+			}
+			catch (InterruptedException iEx)
+			{
+				// TODO Auto-generated catch block
+				iEx.printStackTrace();
 			}
 			
 			if (clientList.size() == 2 && startAuction)
