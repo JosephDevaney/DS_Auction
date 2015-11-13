@@ -87,9 +87,14 @@ public class AuctionServer implements Runnable
 	{
 		System.out.println("New Item!!!!");
 		curItem = AuctionItem.getCurrentItem();
+		broadcastItem(curItem);
+	}
+	
+	public void broadcastItem(AuctionItem item)
+	{
 		for (ClientHandler ch : clientList)
 		{
-			ch.sendItem(curItem);
+			ch.sendItem(item);
 		}
 	}
 	
@@ -98,7 +103,8 @@ public class AuctionServer implements Runnable
 		int bid = Integer.parseInt(bidStr);
 		if (bid > curItem.getCurrentBid())
 		{
-			newAuctionItem();
+			curItem.setCurrentBid(bid);
+			broadcastItem(curItem);
 			aHandler.interrupt();
 		}
 	}
