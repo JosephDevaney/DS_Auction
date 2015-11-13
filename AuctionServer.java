@@ -90,6 +90,27 @@ public class AuctionServer implements Runnable
 		broadcastItem(curItem);
 	}
 	
+	public void leaveAuction(ClientHandler ch)
+	{
+		clientList.remove(ch);
+		try
+		{
+			ch.close();
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			System.out.println("Error closing thread");
+			e.printStackTrace();
+		}
+		
+		if (clientList.size() < 2)
+		{
+			aHandler.stopThread();
+			aHandler.interrupt();
+		}
+	}
+	
 	public void broadcastItem(AuctionItem item)
 	{
 		for (ClientHandler ch : clientList)

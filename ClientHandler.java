@@ -52,47 +52,34 @@ public class ClientHandler extends Thread
 			try
 			{
 				server.newBid(input.readUTF());
-//				int sleepTime = (int)(Math.random() * 3000);
-//				Thread.sleep(sleepTime);
 			}
-			catch (IOException e)
+			catch (IOException ioEx)
 			{
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				ioEx.printStackTrace();
+				server.leaveAuction(this);
+				thread = null;
 			}
-//			catch (InterruptedException iEx)
-//			{
-//				// TODO Auto-generated catch block
-//				iEx.printStackTrace();
-//			}
 			
 			
 		}
 		
-//		AuctionItem item = null;
-//
-//		item = AuctionItem.getCurrentItem();
-//		try
-//		{
-//			outstream.writeObject(item);
-//			outstream.flush();
-//			System.out.println("outstream object");
-//		}
-//		catch (IOException e)
-//		{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		try
-//		{
-//			outstream.close();
-//		}
-//		catch (IOException e)
-//		{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-		
+	}
+	
+	public void close() throws IOException
+	{
+		if (client != null)
+		{
+			client.close();
+		}
+		if (input != null)
+		{
+			input.close();
+		}
+		if (output != null)
+		{
+			output.close();
+		}
 	}
 
 	public void sendItem(AuctionItem item)
@@ -104,10 +91,11 @@ public class ClientHandler extends Thread
 			outstream.flush();
 			outstream.reset();
 		}
-		catch (IOException e)
+		catch (IOException ioEx)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			ioEx.printStackTrace();
+			server.leaveAuction(this);
+			thread = null;
 		}
 	}
 	

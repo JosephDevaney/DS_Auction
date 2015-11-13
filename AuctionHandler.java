@@ -2,16 +2,21 @@
 public class AuctionHandler extends Thread
 {
 	private AuctionServer server = null;
+	private boolean runThread = true;
 	
 	public AuctionHandler(AuctionServer server)
 	{
 		this.server = server;
 	}
+	public void stopThread()
+	{
+		runThread = false;
+	}
 	
 	public void run()
 	{
 		boolean isComplete;
-		while (true)
+		while (runThread)
 		{
 			isComplete = manageAuctionTime(60000);
 			if (isComplete)

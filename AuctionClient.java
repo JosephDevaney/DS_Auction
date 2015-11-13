@@ -71,75 +71,9 @@ public class AuctionClient implements Runnable
 			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+				leaveAuction();
 			}
 		}
-		
-//		AuctionItem curItem = null;
-//		
-//		try
-//		{
-//			
-//			
-//			//Scanner auctionInput = new Scanner(socket.getInputStream());
-//			PrintWriter AuctionOutput = new PrintWriter(socket.getOutputStream(), true);
-//			
-//			ObjectInputStream inStream = new ObjectInputStream(socket.getInputStream());
-//			
-//			Scanner userEntry = new Scanner(System.in);
-//			
-//			//TODO Parse info between server and client
-//			do
-//			{
-//				try
-//				{
-////					do
-////					{
-////						curItem = (AuctionItem) inStream.readObject();
-////						System.out.println("Item " + curItem.getName() + "for auction");
-////						System.out.println("Current bid:" + curItem.getCurrentBid());
-////						System.out.println("Reserve Price: " + curItem.getReservePrice());
-////					} while (true);
-//					System.out.println("Read object from file");
-//					
-//					
-//				}
-//				catch (EOFException eof)
-//				{
-//					// TODO: handle exception
-//					System.out.println("File read");
-//				}
-//				catch (ClassNotFoundException cnfEx)
-//				{
-//					// TODO Auto-generated catch block
-//					cnfEx.printStackTrace();
-//				}
-//				
-////				System.out.println("The current item is: " + curItem.getName());
-////				System.out.println("The current bid is: " + curItem.getCurrentBid());
-////				System.out.println("The reserve price is: " + curItem.getReservePrice());
-//				
-//			} while(curItem != null);
-//			
-//		} 
-//		catch (IOException ioEx)
-//		{
-//			// TODO: handle exception
-//			ioEx.printStackTrace();
-//		}
-//		finally
-//		{
-//			try
-//			{
-//				System.out.println("Closing Connection...");
-//				socket.close();
-//			} 
-//			catch (IOException ioEx)
-//			{
-//				System.out.println("Unable to disconnect");
-//				System.exit(1);
-//			}
-//		}
-
 	}
 	
 	private void joinAuction()
@@ -162,6 +96,33 @@ public class AuctionClient implements Runnable
 			thread.start();
 						
 		}
+	}
+	
+	public void leaveAuction()
+	{
+		try
+		{
+			if (socket != null)
+			{
+				socket.close();
+			}
+			if (reader != null)
+			{
+				reader.close();
+			}
+			if (output != null)
+			{
+				output.close();
+			}
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		client.close();
+		thread = null;
 	}
 
 }

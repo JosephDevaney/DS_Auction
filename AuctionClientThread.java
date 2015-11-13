@@ -28,6 +28,23 @@ public class AuctionClientThread extends Thread
 		}
 	}
 	
+	public void close()
+	{
+		try
+		{
+			if (inStream != null)
+			{
+				inStream.close();
+				client = null;
+			}
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public void run()
 	{
 		AuctionItem item = null;
