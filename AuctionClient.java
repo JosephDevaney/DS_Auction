@@ -1,6 +1,8 @@
+import java.io.BufferedReader;
 import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -8,17 +10,29 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class AuctionClient
+public class AuctionClient implements Runnable
 {
 	private static InetAddress host;
 	private static final int port = 1234;
+	private Socket socket = null;
+	private BufferedReader reader = null;
+	private AuctionClientThread client;
+	private Thread thread;
 	
-	public static void main(String[] args)
+	public void displayItemInfo(AuctionItem item)
 	{
-		// TODO Auto-generated method stub
+		System.out.println("Item " + item.getName() + "for auction");
+		System.out.println("Current bid:" + item.getCurrentBid());
+		System.out.println("Reserve Price: " + item.getReservePrice());
+	}
+	
+	public AuctionClient()
+	{
 		try
 		{
 			host = InetAddress.getLocalHost();
+			socket = new Socket(host, port);
+			joinAuction();
 		} 
 		catch (UnknownHostException uhEx)
 		{
@@ -26,79 +40,115 @@ public class AuctionClient
 			System.out.println("Host ID not found");
 			System.exit(1);
 		}
-		
-		joinAuction();
-	}
-	
-	private static void joinAuction()
-	{
-		Socket socket = null;
-		AuctionItem curItem = null;
-		
-		try
-		{
-			socket = new Socket(host, port);
-			
-			//Scanner auctionInput = new Scanner(socket.getInputStream());
-			//PrintWriter AuctionOutput = new PrintWriter(socket.getOutputStream(), true);
-			
-			ObjectInputStream inStream = new ObjectInputStream(socket.getInputStream());
-			
-			Scanner userEntry = new Scanner(System.in);
-			
-			//TODO Parse info between server and client
-			do
-			{
-				try
-				{
-					do
-					{
-						curItem = (AuctionItem) inStream.readObject();
-						System.out.println("Item " + curItem.getName() + "for auction");
-						System.out.println("Current bid:" + curItem.getCurrentBid());
-						System.out.println("Reserve Price: " + curItem.getReservePrice());
-					} while (true);
-//					System.out.println("Read object from file");
-//					curItem = (AuctionItem) inStream.readObject();
-//					System.out.println("Item " + curItem.getName() + "for auction");
-//					System.out.println("Current bid:" + curItem.getCurrentBid());
-//					System.out.println("Reserve Price: " + curItem.getReservePrice());
-				}
-				catch (EOFException eof)
-				{
-					// TODO: handle exception
-					System.out.println("File read");
-				}
-				catch (ClassNotFoundException cnfEx)
-				{
-					// TODO Auto-generated catch block
-					cnfEx.printStackTrace();
-				}
-				
-//				System.out.println("The current item is: " + curItem.getName());
-//				System.out.println("The current bid is: " + curItem.getCurrentBid());
-//				System.out.println("The reserve price is: " + curItem.getReservePrice());
-				
-			} while(curItem != null);
-			
-		} 
 		catch (IOException ioEx)
 		{
-			// TODO: handle exception
 			ioEx.printStackTrace();
 		}
-		finally
+	}
+	
+	public static void main(String[] args)
+	{
+		// TODO Auto-generated method stub
+		AuctionClient client = new AuctionClient();
+		
+		
+	}
+	
+	public void run()
+	{
+		while(client != null)
 		{
 			try
 			{
-				System.out.println("Closing Connection...");
-				socket.close();
-			} 
-			catch (IOException ioEx)
-			{
-				System.out.println("Unable to disconnect");
-				System.exit(1);
+				String message = reader.readLine();
+				System.out.println(message);
 			}
+			catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+//		AuctionItem curItem = null;
+//		
+//		try
+//		{
+//			
+//			
+//			//Scanner auctionInput = new Scanner(socket.getInputStream());
+//			PrintWriter AuctionOutput = new PrintWriter(socket.getOutputStream(), true);
+//			
+//			ObjectInputStream inStream = new ObjectInputStream(socket.getInputStream());
+//			
+//			Scanner userEntry = new Scanner(System.in);
+//			
+//			//TODO Parse info between server and client
+//			do
+//			{
+//				try
+//				{
+////					do
+////					{
+////						curItem = (AuctionItem) inStream.readObject();
+////						System.out.println("Item " + curItem.getName() + "for auction");
+////						System.out.println("Current bid:" + curItem.getCurrentBid());
+////						System.out.println("Reserve Price: " + curItem.getReservePrice());
+////					} while (true);
+//					System.out.println("Read object from file");
+//					
+//					
+//				}
+//				catch (EOFException eof)
+//				{
+//					// TODO: handle exception
+//					System.out.println("File read");
+//				}
+//				catch (ClassNotFoundException cnfEx)
+//				{
+//					// TODO Auto-generated catch block
+//					cnfEx.printStackTrace();
+//				}
+//				
+////				System.out.println("The current item is: " + curItem.getName());
+////				System.out.println("The current bid is: " + curItem.getCurrentBid());
+////				System.out.println("The reserve price is: " + curItem.getReservePrice());
+//				
+//			} while(curItem != null);
+//			
+//		} 
+//		catch (IOException ioEx)
+//		{
+//			// TODO: handle exception
+//			ioEx.printStackTrace();
+//		}
+//		finally
+//		{
+//			try
+//			{
+//				System.out.println("Closing Connection...");
+//				socket.close();
+//			} 
+//			catch (IOException ioEx)
+//			{
+//				System.out.println("Unable to disconnect");
+//				System.exit(1);
+//			}
+//		}
+
+	}
+	
+	private void joinAuction()
+	{
+		reader = new BufferedReader(new InputStreamReader(System.in)); 
+		
+		if (thread == null)
+		{
+			client = new AuctionClientThread(this, socket);
+			client.start();
+			thread = new Thread(this);
+			thread.start();
+						
 		}
 	}
 

@@ -22,16 +22,16 @@ public class ClientHandler extends Thread
 		client = socket;
 		this.server = server;
 
-//		try
-//		{
-//			input = new Scanner(client.getInputStream());
-//			output = new PrintWriter(client.getOutputStream(), true);
-//		} 
-//		catch (IOException ioEx)
-//		{
-//			// TODO: handle exception
-//			ioEx.printStackTrace();
-//		}
+		try
+		{
+			input = new Scanner(client.getInputStream());
+			//output = new PrintWriter(client.getOutputStream(), true);
+		} 
+		catch (IOException ioEx)
+		{
+			// TODO: handle exception
+			ioEx.printStackTrace();
+		}
 		
 		try
 		{
@@ -54,6 +54,7 @@ public class ClientHandler extends Thread
 		try
 		{
 			outstream.writeObject(item);
+			outstream.flush();
 			System.out.println("outstream object");
 		}
 		catch (IOException e)
