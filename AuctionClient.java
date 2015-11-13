@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,6 +17,7 @@ public class AuctionClient implements Runnable
 	private static final int port = 1234;
 	private Socket socket = null;
 	private BufferedReader reader = null;
+	private DataOutputStream output = null;
 	private AuctionClientThread client;
 	private Thread thread;
 	
@@ -140,8 +142,16 @@ public class AuctionClient implements Runnable
 	
 	private void joinAuction()
 	{
-		reader = new BufferedReader(new InputStreamReader(System.in)); 
-		
+		try
+		{
+			reader = new BufferedReader(new InputStreamReader(System.in)); 
+			output = new DataOutputStream(socket.getOutputStream());
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (thread == null)
 		{
 			client = new AuctionClientThread(this, socket);

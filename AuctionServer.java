@@ -11,6 +11,7 @@ public class AuctionServer implements Runnable
 	private Thread thread = null;
 	private boolean startAuction = true;
 	private AuctionHandler aHandler;
+	private AuctionItem curItem;
 
 	public AuctionServer()
 	{
@@ -59,6 +60,8 @@ public class AuctionServer implements Runnable
 			
 			if (clientList.size() == 2 && startAuction)
 			{
+				newAuctionItem();
+				
 				aHandler = new AuctionHandler(this);
 				aHandler.start();
 				startAuction = false;
@@ -75,7 +78,21 @@ public class AuctionServer implements Runnable
 	
 	public void newAuctionItem()
 	{
-		
+		curItem = AuctionItem.getCurrentItem();
+		for (ClientHandler ch : clientList)
+		{
+			ch.sendItem(curItem);
+		}
+	}
+	
+	public void newBid(String bidStr)
+	{
+		int bid = Integer.parseInt(bidStr);
+		if (bid > curItem.getCurrentBid())
+		{
+			newAuctionItem();
+			aHandler.interrupt();
+		}
 	}
 	
 	public static void main(String[] args) throws IOException

@@ -1,19 +1,18 @@
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class ClientHandler extends Thread
 {
 	private AuctionServer server;
 	private Socket client;
-	private Scanner input;
+	private DataInputStream input;
 	private PrintWriter output;
-	private ObjectInputStream inStream;
 	private ObjectOutputStream outstream;
 	private Thread thread = null;
 	
@@ -24,7 +23,7 @@ public class ClientHandler extends Thread
 
 		try
 		{
-			input = new Scanner(client.getInputStream());
+			input = new DataInputStream(new BufferedInputStream(client.getInputStream()));
 			//output = new PrintWriter(client.getOutputStream(), true);
 		} 
 		catch (IOException ioEx)
@@ -36,7 +35,6 @@ public class ClientHandler extends Thread
 		try
 		{
 			outstream = new ObjectOutputStream(client.getOutputStream());
-			//inStream = new ObjectInputStream(client.getInputStream());
 		}
 		catch (IOException e)
 		{
@@ -47,31 +45,62 @@ public class ClientHandler extends Thread
 	
 	public void run()
 	{
-		//thread = new Thread(this);
-		AuctionItem item = null;
+		thread = new Thread(this);
+		
+		while (thread != null)
+		{
+			try
+			{
+				server.newBid(input.readUTF());
+			}
+			catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			
+		}
+		
+//		AuctionItem item = null;
+//
+//		item = AuctionItem.getCurrentItem();
+//		try
+//		{
+//			outstream.writeObject(item);
+//			outstream.flush();
+//			System.out.println("outstream object");
+//		}
+//		catch (IOException e)
+//		{
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		try
+//		{
+//			outstream.close();
+//		}
+//		catch (IOException e)
+//		{
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+	}
 
-		item = AuctionItem.getCurrentItem();
+	public void sendItem(AuctionItem item)
+	{
+		// TODO Auto-generated method stub
 		try
 		{
 			outstream.writeObject(item);
 			outstream.flush();
-			System.out.println("outstream object");
 		}
 		catch (IOException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		try
-		{
-			outstream.close();
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
 	}
 	
 }
