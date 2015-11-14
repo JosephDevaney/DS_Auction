@@ -63,9 +63,15 @@ public class AuctionClient implements Runnable
 			try
 			{
 				String message = reader.readLine();
-				output.writeUTF(message);
-				output.flush();
-//				System.out.println(message);
+				if (message == "leave" || message.matches("-?\\d+(\\.\\d+)?"));
+				{				
+					output.writeUTF(message);
+					output.flush();
+					if (message == "leave")
+					{
+						leaveAuction();
+					}
+				}
 			}
 			catch (IOException e)
 			{

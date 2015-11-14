@@ -54,7 +54,6 @@ public class AuctionClientThread extends Thread
 			try
 			{
 				item = (AuctionItem) inStream.readObject();
-				System.out.println("Bid = " + item.getCurrentBid());
 				client.displayItemInfo(item);
 			}
 			catch (ClassNotFoundException cnfEx)

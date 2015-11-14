@@ -46,12 +46,21 @@ public class ClientHandler extends Thread
 	public void run()
 	{
 		thread = new Thread(this);
+		String msg;
 		
 		while (thread != null)
 		{
 			try
 			{
-				server.newBid(input.readUTF());
+				msg = input.readUTF();
+				if (msg.equals("leave"))
+				{
+					server.leaveAuction(this);
+				}
+				else
+				{
+					server.newBid(msg);
+				}
 			}
 			catch (IOException ioEx)
 			{
