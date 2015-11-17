@@ -1,3 +1,4 @@
+import java.awt.SecondaryLoop;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -12,6 +13,7 @@ public class AuctionServer implements Runnable
 	private boolean startAuction = true;
 	private AuctionHandler aHandler;
 	private AuctionItem curItem;
+	private ClientHandler curBidHolder = null;
 
 	public AuctionServer()
 	{
@@ -67,7 +69,8 @@ public class AuctionServer implements Runnable
 			
 			if (clientList.size() == 2 && startAuction)
 			{
-				newAuctionItem();
+				curItem = AuctionItem.getCurrentItem();
+				broadcastItem(curItem);
 				
 				aHandler = new AuctionHandler(this);
 				aHandler.start();
@@ -85,8 +88,11 @@ public class AuctionServer implements Runnable
 	
 	public void newAuctionItem()
 	{
-		System.out.println("New Item!!!!");
-		curItem = AuctionItem.getCurrentItem();
+		if (curItem.getCurrentBid() >= curItem.getReservePrice())
+		{
+			curItem.setSold(true);
+		}
+		curItem = AuctionItem.nextItem();
 		broadcastItem(curItem);
 	}
 	
@@ -124,12 +130,30 @@ public class AuctionServer implements Runnable
 		notifyAll();
 	}
 	
-	public void newBid(String bidStr)
+	public synchronized void broadcastBidInfo()
+	{
+		for (ClientHandler ch : clientList)
+		{
+			if (ch == curBidHolder)
+			{
+				ch.sendMsg("Your bid is the current bid");
+			}
+			else
+			{
+				ch.sendMsg("There is a new bid");
+			}
+		}
+		notifyAll();
+	}
+	
+	public void newBid(String bidStr, ClientHandler ch)
 	{
 		double bid = Double.parseDouble(bidStr);
 		if (bid > curItem.getCurrentBid())
 		{
 			curItem.setCurrentBid(bid);
+			curBidHolder = ch;
+			broadcastBidInfo();
 			broadcastItem(curItem);
 			aHandler.interrupt();
 		}
@@ -140,7 +164,6 @@ public class AuctionServer implements Runnable
 		// TODO Auto-generated method stub
 		
 		AuctionItem[] items = { new AuctionItem("Shoe", 100.00), new AuctionItem("Tie", 85.00) };
-		items[0].setCurrentBid(15.00d);
 		AuctionServer server = new AuctionServer();
 
 	}

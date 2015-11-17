@@ -1,3 +1,4 @@
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
@@ -8,6 +9,7 @@ public class AuctionClientThread extends Thread
 	private AuctionClient client;
 	private Socket socket;
 	private ObjectInputStream inStream;
+	private DataInputStream input;
 	
 	public AuctionClientThread(AuctionClient client, Socket socket)
 	{
@@ -21,6 +23,7 @@ public class AuctionClientThread extends Thread
 		try
 		{
 			inStream = new ObjectInputStream(socket.getInputStream());
+			input = new DataInputStream(socket.getInputStream());
 		}
 		catch (IOException e)
 		{
@@ -37,6 +40,10 @@ public class AuctionClientThread extends Thread
 			{
 				inStream.close();
 			}
+			if (input != null)
+			{
+				input.close();
+			}
 		}
 		catch (IOException e)
 		{
@@ -48,19 +55,23 @@ public class AuctionClientThread extends Thread
 	
 	public void run()
 	{
-		AuctionItem item = null;
+		String message = "";
 		while (client != null)
 		{
-			
 			try
 			{
-				item = (AuctionItem) inStream.readObject();
-				client.displayItemInfo(item);
-			}
-			catch (ClassNotFoundException cnfEx)
-			{
-				// TODO Auto-generated catch block
-				cnfEx.printStackTrace();
+				message = input.readUTF();
+				System.out.println("Try again");
+				if (message.equals("___Object___"))
+				{
+					System.out.println("Incoming object");
+					getItem();
+				}
+				else
+				{
+					System.out.println("just a message");
+					client.displayMsg(message);
+				}
 			}
 			catch (IOException ioEx)
 			{
@@ -68,5 +79,27 @@ public class AuctionClientThread extends Thread
 				close();
 			}
 		}
+	}
+	
+	public void getItem()
+	{
+		AuctionItem item = null;
+		
+		try
+		{
+			item = (AuctionItem) inStream.readObject();
+			client.displayItemInfo(item);
+		}
+		catch (ClassNotFoundException cnfEx)
+		{
+			// TODO Auto-generated catch block
+			cnfEx.printStackTrace();
+		}
+		catch (IOException ioEx)
+		{
+			ioEx.printStackTrace();
+			close();
+		}
+	
 	}
 }

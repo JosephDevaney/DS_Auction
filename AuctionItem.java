@@ -7,8 +7,10 @@ public class AuctionItem implements Serializable
 	private double reservePrice;
 	private double currentBid;
 	private static int currentItem = 0;
+	private boolean sold;
 	
 	private static ArrayList<AuctionItem> items = new ArrayList<>();
+	private static ArrayList<AuctionItem> soldItems = new ArrayList<>();
 	
 	public String getName()
 	{
@@ -40,20 +42,44 @@ public class AuctionItem implements Serializable
 		this.currentBid = currentBid;
 	}
 
+	public boolean isSold()
+	{
+		return sold;
+	}
+
+	public void setSold(boolean sold)
+	{
+		this.sold = sold;
+	}
+
 	public AuctionItem (String name, double reservePrice)
 	{
 		this.name = name;
 		this.reservePrice = reservePrice;
 		currentBid = 0;
+		sold = false;
 		
 		items.add(this);
 	}
 	
 	public static AuctionItem getCurrentItem ()
+	{		
+		return items.get(currentItem);
+	}
+	
+	public static AuctionItem nextItem()
 	{
 		AuctionItem item = items.get(currentItem);
-		currentItem = (currentItem + 1) % items.size();
-		return item;
+		if (item.isSold())
+		{
+			soldItems.add(items.remove(currentItem));
+		}
+		else
+		{
+			currentItem = (currentItem + 1) % items.size();
+		}
+		
+		return items.get(currentItem);
 	}
 	
 }

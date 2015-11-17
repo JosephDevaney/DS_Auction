@@ -28,6 +28,11 @@ public class AuctionClient implements Runnable
 		System.out.println("Reserve Price: " + item.getReservePrice());
 	}
 	
+	public void displayMsg(String msg)
+	{
+		System.out.println(msg);
+	}
+	
 	public AuctionClient()
 	{
 		try

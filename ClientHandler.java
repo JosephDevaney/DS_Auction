@@ -1,5 +1,6 @@
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,7 +13,7 @@ public class ClientHandler extends Thread
 	private AuctionServer server;
 	private Socket client;
 	private DataInputStream input;
-	private PrintWriter output;
+	private DataOutputStream output;
 	private ObjectOutputStream outstream;
 	private Thread thread = null;
 	
@@ -24,7 +25,7 @@ public class ClientHandler extends Thread
 		try
 		{
 			input = new DataInputStream(new BufferedInputStream(client.getInputStream()));
-			//output = new PrintWriter(client.getOutputStream(), true);
+			output = new DataOutputStream(client.getOutputStream());
 		} 
 		catch (IOException ioEx)
 		{
@@ -62,7 +63,7 @@ public class ClientHandler extends Thread
 				}
 				else
 				{
-					server.newBid(msg);
+					server.newBid(msg, this);
 				}
 			}
 			catch (IOException ioEx)
@@ -97,6 +98,7 @@ public class ClientHandler extends Thread
 	public void sendItem(AuctionItem item)
 	{
 		// TODO Auto-generated method stub
+		sendMsg("___Object___");
 		try
 		{
 			outstream.writeObject(item);
@@ -108,6 +110,22 @@ public class ClientHandler extends Thread
 			ioEx.printStackTrace();
 			server.leaveAuction(this);
 			thread = null;
+		}
+	}
+	
+	public void sendMsg(String msg)
+	{
+		try
+		{
+			output.writeUTF(msg);
+			output.flush();
+
+			System.out.println(msg);
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
