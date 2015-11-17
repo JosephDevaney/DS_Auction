@@ -117,8 +117,12 @@ public class ClientHandler extends Thread
 	{
 		try
 		{
-			output.writeUTF(msg);
-			output.flush();
+//			output.writeUTF(msg);
+//			output.flush();
+			
+			outstream.writeObject(msg);
+			outstream.flush();
+			outstream.reset();
 
 			System.out.println(msg);
 		}

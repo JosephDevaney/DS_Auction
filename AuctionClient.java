@@ -24,8 +24,9 @@ public class AuctionClient implements Runnable
 	public void displayItemInfo(AuctionItem item)
 	{
 		System.out.println("Item " + item.getName() + "for auction");
-		System.out.println("Current bid:" + item.getCurrentBid());
+		System.out.println("Current bid: " + item.getCurrentBid());
 		System.out.println("Reserve Price: " + item.getReservePrice());
+		System.out.println("\nThere is " + (6 - ((System.currentTimeMillis() - item.getStartTime()) / 1000)) + " milliseconds left to bid\n");
 	}
 	
 	public void displayMsg(String msg)

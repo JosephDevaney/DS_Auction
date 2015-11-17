@@ -60,8 +60,9 @@ public class AuctionClientThread extends Thread
 		{
 			try
 			{
-				message = input.readUTF();
-				System.out.println("Try again");
+//				message = input.readUTF();
+				message = (String) inStream.readObject();
+				
 				if (message.equals("___Object___"))
 				{
 					System.out.println("Incoming object");
@@ -69,7 +70,6 @@ public class AuctionClientThread extends Thread
 				}
 				else
 				{
-					System.out.println("just a message");
 					client.displayMsg(message);
 				}
 			}
@@ -77,6 +77,11 @@ public class AuctionClientThread extends Thread
 			{
 				ioEx.printStackTrace();
 				close();
+			}
+			catch (ClassNotFoundException cnfEx)
+			{
+				// TODO Auto-generated catch block
+				cnfEx.printStackTrace();
 			}
 		}
 	}

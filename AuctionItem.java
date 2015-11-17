@@ -8,6 +8,7 @@ public class AuctionItem implements Serializable
 	private double currentBid;
 	private static int currentItem = 0;
 	private boolean sold;
+	private long startTime;
 	
 	private static ArrayList<AuctionItem> items = new ArrayList<>();
 	private static ArrayList<AuctionItem> soldItems = new ArrayList<>();
@@ -52,12 +53,23 @@ public class AuctionItem implements Serializable
 		this.sold = sold;
 	}
 
+	public long getStartTime()
+	{
+		return startTime;
+	}
+
+	public void setStartTime(long startTime)
+	{
+		this.startTime = startTime;
+	}
+
 	public AuctionItem (String name, double reservePrice)
 	{
 		this.name = name;
 		this.reservePrice = reservePrice;
 		currentBid = 0;
 		sold = false;
+		startTime = 0;
 		
 		items.add(this);
 	}
@@ -79,7 +91,7 @@ public class AuctionItem implements Serializable
 			currentItem = (currentItem + 1) % items.size();
 		}
 		
-		return items.get(currentItem);
+		return items.size() > 0 ? items.get(currentItem) : null;
 	}
 	
 }

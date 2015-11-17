@@ -1,4 +1,3 @@
-import java.awt.SecondaryLoop;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -70,6 +69,7 @@ public class AuctionServer implements Runnable
 			if (clientList.size() == 2 && startAuction)
 			{
 				curItem = AuctionItem.getCurrentItem();
+				curItem.setStartTime(System.currentTimeMillis());
 				broadcastItem(curItem);
 				
 				aHandler = new AuctionHandler(this);
@@ -93,7 +93,18 @@ public class AuctionServer implements Runnable
 			curItem.setSold(true);
 		}
 		curItem = AuctionItem.nextItem();
-		broadcastItem(curItem);
+		curItem.setStartTime(System.currentTimeMillis());
+		if (curItem != null)
+		{
+			broadcastItem(curItem);
+		}
+		else
+		{
+			for (ClientHandler ch : clientList)
+			{
+				ch.sendMsg("The Auction has concluded, thank you for participating");
+			}
+		}
 	}
 	
 	public synchronized void leaveAuction(ClientHandler ch)
@@ -152,11 +163,13 @@ public class AuctionServer implements Runnable
 		if (bid > curItem.getCurrentBid())
 		{
 			curItem.setCurrentBid(bid);
+			curItem.setStartTime(System.currentTimeMillis());
 			curBidHolder = ch;
 			broadcastBidInfo();
 			broadcastItem(curItem);
 			aHandler.interrupt();
 		}
+		
 	}
 	
 	public static void main(String[] args) throws IOException
