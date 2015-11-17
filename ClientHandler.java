@@ -53,8 +53,11 @@ public class ClientHandler extends Thread
 			try
 			{
 				msg = input.readUTF();
+
+				System.out.println(msg);
 				if (msg.equals("leave"))
 				{
+					System.out.println("Apparently ^^^ is leave");
 					server.leaveAuction(this);
 				}
 				else
@@ -65,7 +68,7 @@ public class ClientHandler extends Thread
 			catch (IOException ioEx)
 			{
 				// TODO Auto-generated catch block
-				ioEx.printStackTrace();
+//				ioEx.printStackTrace();
 				server.leaveAuction(this);
 				thread = null;
 			}
@@ -77,10 +80,6 @@ public class ClientHandler extends Thread
 	
 	public void close() throws IOException
 	{
-		if (client != null)
-		{
-			client.close();
-		}
 		if (input != null)
 		{
 			input.close();
@@ -88,6 +87,10 @@ public class ClientHandler extends Thread
 		if (output != null)
 		{
 			output.close();
+		}
+		if (client != null)
+		{
+			client.close();
 		}
 	}
 

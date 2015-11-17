@@ -63,20 +63,23 @@ public class AuctionClient implements Runnable
 			try
 			{
 				String message = reader.readLine();
-				if (message == "leave" || message.matches("-?\\d+(\\.\\d+)?"));
-				{				
+
+				if (message.equals("leave") || message.matches("-?\\d+(\\.\\d+)?"))
+				{
 					output.writeUTF(message);
 					output.flush();
-					if (message == "leave")
+					if (message.equals("leave"))
 					{
 						leaveAuction();
+						break;
 					}
 				}
 			}
 			catch (IOException e)
 			{
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				System.out.println("AuctionClient > run() exception - 1");
 				leaveAuction();
 			}
 		}
@@ -124,7 +127,9 @@ public class AuctionClient implements Runnable
 		catch (IOException e)
 		{
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			client.close();
+			thread = null;
 		}
 		
 		client.close();

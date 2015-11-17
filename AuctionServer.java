@@ -90,8 +90,9 @@ public class AuctionServer implements Runnable
 		broadcastItem(curItem);
 	}
 	
-	public void leaveAuction(ClientHandler ch)
+	public synchronized void leaveAuction(ClientHandler ch)
 	{
+		System.out.println("Person has left auction");
 		clientList.remove(ch);
 		try
 		{
@@ -108,15 +109,19 @@ public class AuctionServer implements Runnable
 		{
 			aHandler.stopThread();
 			aHandler.interrupt();
+			startAuction = true;
 		}
+		
+		notifyAll();
 	}
 	
-	public void broadcastItem(AuctionItem item)
+	public synchronized void broadcastItem(AuctionItem item)
 	{
 		for (ClientHandler ch : clientList)
 		{
 			ch.sendItem(item);
 		}
+		notifyAll();
 	}
 	
 	public void newBid(String bidStr)

@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class AuctionClientThread extends Thread
 {
@@ -35,7 +36,6 @@ public class AuctionClientThread extends Thread
 			if (inStream != null)
 			{
 				inStream.close();
-				client = null;
 			}
 		}
 		catch (IOException e)
@@ -43,6 +43,7 @@ public class AuctionClientThread extends Thread
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		client = null;
 	}
 	
 	public void run()
@@ -64,6 +65,7 @@ public class AuctionClientThread extends Thread
 			catch (IOException ioEx)
 			{
 				ioEx.printStackTrace();
+				close();
 			}
 		}
 	}
