@@ -1,7 +1,10 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class AuctionServer implements Runnable
 {
@@ -172,11 +175,36 @@ public class AuctionServer implements Runnable
 		
 	}
 	
+	private static void loadData()
+	{
+		Scanner reader = null;
+		try
+		{
+			reader = new Scanner(new File("items.dat"));
+		}
+		catch (FileNotFoundException e)
+		{
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			System.out.println("Unable to load Items");
+		}
+		String line = "";
+		String[] args = new String[2];
+		
+		while (reader.hasNextLine())
+		{
+			line = reader.nextLine();
+			args = line.split("\t");
+			new AuctionItem(args[0], Double.parseDouble(args[1]));
+		}
+		reader.close();
+	}
+	
 	public static void main(String[] args) throws IOException
 	{
 		// TODO Auto-generated method stub
-		
-		AuctionItem[] items = { new AuctionItem("Shoe", 100.00), new AuctionItem("Tie", 85.00) };
+		loadData();
+		//AuctionItem[] items = { new AuctionItem("Shoe", 100.00), new AuctionItem("Tie", 85.00) };
 		AuctionServer server = new AuctionServer();
 
 	}

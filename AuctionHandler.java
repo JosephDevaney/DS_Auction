@@ -18,7 +18,7 @@ public class AuctionHandler extends Thread
 		boolean isComplete;
 		while (runThread)
 		{
-			isComplete = manageAuctionTime(6000);
+			isComplete = manageAuctionTime(60000);
 			if (isComplete)
 			{
 				server.newAuctionItem();
