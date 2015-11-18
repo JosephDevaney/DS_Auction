@@ -20,13 +20,38 @@ public class AuctionClient implements Runnable
 	private DataOutputStream output = null;
 	private AuctionClientThread client;
 	private Thread thread;
+	private AuctionItem curItem;
 	
-	public void displayItemInfo(AuctionItem item)
+	public void setCurItem(AuctionItem item)
 	{
-		System.out.println("Item " + item.getName() + " for auction");
-		System.out.println("Current bid: " + item.getCurrentBid());
-		System.out.println("Reserve Price: " + item.getReservePrice());
-		System.out.println("\nThere is " + (60 - ((System.currentTimeMillis() - item.getStartTime()) / 1000)) + " seconds left to bid\n");
+		curItem = item;
+		displayItemInfo();
+		displayTime();
+	}
+	
+	public void cls()
+	{
+		String clear = "";
+		for (int i = 0; i < 50; i++)
+		{
+			clear += "\n";
+		}
+		System.out.println(clear);
+	}
+	
+	public void displayItemInfo()
+	{
+		System.out.println("Item " + curItem.getName() + " for auction");
+		System.out.println("Current bid: " + curItem.getCurrentBid());
+		System.out.println("Reserve Price: " + curItem.getReservePrice());
+	}
+	
+	public void displayTime()
+	{
+		if (curItem != null)
+		{
+			System.out.println("\nThere is " + (60 - ((System.currentTimeMillis() - curItem.getStartTime()) / 1000)) + " seconds left to bid\n");
+		}
 	}
 	
 	public void displayMsg(String msg)
@@ -70,22 +95,25 @@ public class AuctionClient implements Runnable
 			{
 				String message = reader.readLine();
 
-				if (message.equals("leave") || message.matches("-?\\d+(\\.\\d+)?"))
+				if (message.equals("LEAVE") || message.matches("-?\\d+(\\.\\d+)?"))
 				{
 					output.writeUTF(message);
 					output.flush();
-					if (message.equals("leave"))
+					if (message.equals("LEAVE"))
 					{
 						leaveAuction();
 						break;
 					}
 				}
+				else if (message.equals("TIME"))
+				{
+					displayTime();
+				}
 			}
 			catch (IOException e)
 			{
 				// TODO Auto-generated catch block
-				//e.printStackTrace();
-				System.out.println("AuctionClient > run() exception - 1");
+				e.printStackTrace();
 				leaveAuction();
 			}
 		}

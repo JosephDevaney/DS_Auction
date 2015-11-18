@@ -65,17 +65,18 @@ public class AuctionClientThread extends Thread
 				
 				if (message.equals("___Object___"))
 				{
-					System.out.println("Incoming object");
 					getItem();
 				}
 				else
 				{
+					client.cls();
 					client.displayMsg(message);
 				}
 			}
 			catch (IOException ioEx)
 			{
-				ioEx.printStackTrace();
+				//ioEx.printStackTrace();
+				System.out.println("Error on listening socket");
 				close();
 			}
 			catch (ClassNotFoundException cnfEx)
@@ -93,7 +94,7 @@ public class AuctionClientThread extends Thread
 		try
 		{
 			item = (AuctionItem) inStream.readObject();
-			client.displayItemInfo(item);
+			client.setCurItem(item);
 		}
 		catch (ClassNotFoundException cnfEx)
 		{

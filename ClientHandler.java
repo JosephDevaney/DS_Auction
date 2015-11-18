@@ -55,10 +55,8 @@ public class ClientHandler extends Thread
 			{
 				msg = input.readUTF();
 
-				System.out.println(msg);
-				if (msg.equals("leave"))
+				if (msg.equals("LEAVE"))
 				{
-					System.out.println("Apparently ^^^ is leave");
 					server.leaveAuction(this);
 				}
 				else
@@ -123,8 +121,6 @@ public class ClientHandler extends Thread
 			outstream.writeObject(msg);
 			outstream.flush();
 			outstream.reset();
-
-			System.out.println(msg);
 		}
 		catch (IOException e)
 		{
