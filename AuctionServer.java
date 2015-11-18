@@ -54,8 +54,6 @@ public class AuctionServer implements Runnable
 			try
 			{
 				addThread(serverSock.accept());
-				int sleepTime = (int)(Math.random() * 3000);
-//				Thread.sleep(sleepTime);
 			}
 			catch (IOException e)
 			{
@@ -78,6 +76,10 @@ public class AuctionServer implements Runnable
 				aHandler = new AuctionHandler(this);
 				aHandler.start();
 				startAuction = false;
+			}
+			else if (!startAuction)
+			{
+				clientList.get(clientList.size() - 1).sendItem(curItem);
 			}
 		}
 	}
