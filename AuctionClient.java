@@ -1,27 +1,29 @@
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.Scanner;
 
 public class AuctionClient implements Runnable
 {
 	private static InetAddress host;
 	private static final int port = 1234;
 	private Socket socket = null;
+	
 	private BufferedReader reader = null;
 	private DataOutputStream output = null;
-	private AuctionClientThread client;
-	private Thread thread;
-	private AuctionItem curItem;
 	
+	private AuctionClientThread client;
+	private AuctionItem curItem;
+	private Thread thread;
+	
+	
+	/*
+	 * Sets curItem to the reference item
+	 * Displays Item and time remaining to stdout
+	 */
 	public void setCurItem(AuctionItem item)
 	{
 		curItem = item;
@@ -29,6 +31,10 @@ public class AuctionClient implements Runnable
 		displayTime();
 	}
 	
+	
+	/*
+	 * Clears the console
+	 */
 	public void cls()
 	{
 		String clear = "";
@@ -39,6 +45,10 @@ public class AuctionClient implements Runnable
 		System.out.println(clear);
 	}
 	
+	
+	/*
+	 * Displays details about the Item
+	 */
 	public void displayItemInfo()
 	{
 		System.out.println("Item " + curItem.getName() + " for auction");
@@ -46,6 +56,10 @@ public class AuctionClient implements Runnable
 		System.out.println("Reserve Price: " + curItem.getReservePrice());
 	}
 	
+	
+	/*
+	 * Displays remaining Time for item
+	 */
 	public void displayTime()
 	{
 		if (curItem != null)
@@ -59,6 +73,10 @@ public class AuctionClient implements Runnable
 		System.out.println(msg);
 	}
 	
+	
+	/*
+	 * Create Socket and call joinAuction()
+	 */
 	public AuctionClient()
 	{
 		try
@@ -79,14 +97,11 @@ public class AuctionClient implements Runnable
 		}
 	}
 	
-	public static void main(String[] args)
-	{
-		// TODO Auto-generated method stub
-		AuctionClient client = new AuctionClient();
-		
-		
-	}
 	
+	/*
+	 * Read input from clients
+	 * Only specific commands or numbers are allowed
+	 */
 	public void run()
 	{
 		while(client != null)
@@ -119,6 +134,11 @@ public class AuctionClient implements Runnable
 		}
 	}
 	
+	
+	/*
+	 * Create Input stream for User and Create Output stream.
+	 * Create new AuctionClientThread and start that thread and this one
+	 */
 	private void joinAuction()
 	{
 		try
@@ -136,11 +156,14 @@ public class AuctionClient implements Runnable
 			client = new AuctionClientThread(this, socket);
 			client.start();
 			thread = new Thread(this);
-			thread.start();
-						
+			thread.start();		
 		}
 	}
 	
+	
+	/*
+	 * Close streams and socket
+	 */
 	public void leaveAuction()
 	{
 		try
@@ -170,4 +193,8 @@ public class AuctionClient implements Runnable
 		thread = null;
 	}
 
+	public static void main(String[] args)
+	{
+		new AuctionClient();
+	}
 }

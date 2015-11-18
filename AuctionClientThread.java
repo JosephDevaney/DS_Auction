@@ -2,15 +2,23 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.Socket;
-import java.net.SocketException;
 
+/*
+ * Handles the reading of data from AuctionServer
+ */
 public class AuctionClientThread extends Thread
 {
-	private AuctionClient client;
 	private Socket socket;
+	
 	private ObjectInputStream inStream;
 	private DataInputStream input;
 	
+	private AuctionClient client;
+	
+	
+	/*
+	 * Constructor - assigns local references
+	 */
 	public AuctionClientThread(AuctionClient client, Socket socket)
 	{
 		this.client = client;
@@ -18,6 +26,10 @@ public class AuctionClientThread extends Thread
 		open();
 	}
 	
+	
+	/*
+	 * Opens Streams between Client and Server
+	 */
 	public void open()
 	{
 		try
@@ -32,6 +44,10 @@ public class AuctionClientThread extends Thread
 		}
 	}
 	
+	
+	/*
+	 * Closes Streams and socket
+	 */
 	public void close()
 	{
 		try
@@ -53,6 +69,11 @@ public class AuctionClientThread extends Thread
 		client = null;
 	}
 	
+	
+	/*
+	 * Read String Data from Server
+	 * Calls getItem() when the message is "___Object___" to receive an AuctionItem object
+	 */
 	public void run()
 	{
 		String message = "";
@@ -60,7 +81,6 @@ public class AuctionClientThread extends Thread
 		{
 			try
 			{
-//				message = input.readUTF();
 				message = (String) inStream.readObject();
 				
 				if (message.equals("___Object___"))
@@ -87,6 +107,10 @@ public class AuctionClientThread extends Thread
 		}
 	}
 	
+	
+	/*
+	 * Reads data from Server and casts it to an AuctionItem
+	 */
 	public void getItem()
 	{
 		AuctionItem item = null;

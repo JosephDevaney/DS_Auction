@@ -1,22 +1,27 @@
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 
+
+/*
+ * This class will create a new thread to handle connections for all clients
+ */
 public class ClientHandler extends Thread
 {
 	private AuctionServer server;
 	private Socket client;
+	
 	private DataInputStream input;
-	private DataOutputStream output;
 	private ObjectOutputStream outstream;
+	
 	private Thread thread = null;
 	
+	
+	/*
+	 * Constructor, creates Data and Object streams with the client
+	 */
 	public ClientHandler(Socket socket, AuctionServer server)
 	{
 		client = socket;
@@ -25,7 +30,6 @@ public class ClientHandler extends Thread
 		try
 		{
 			input = new DataInputStream(new BufferedInputStream(client.getInputStream()));
-			output = new DataOutputStream(client.getOutputStream());
 		} 
 		catch (IOException ioEx)
 		{
@@ -44,6 +48,9 @@ public class ClientHandler extends Thread
 		}
 	}
 	
+	/**
+	 * Waits for data from the client
+	 */
 	public void run()
 	{
 		thread = new Thread(this);
@@ -70,22 +77,22 @@ public class ClientHandler extends Thread
 //				ioEx.printStackTrace();
 				server.leaveAuction(this);
 				thread = null;
-			}
-			
-			
+			}	
 		}
-		
 	}
 	
+	/*
+	 * Closes connections to streams and sockets
+	 */
 	public void close() throws IOException
 	{
 		if (input != null)
 		{
 			input.close();
 		}
-		if (output != null)
+		if (outstream != null)
 		{
-			output.close();
+			outstream.close();
 		}
 		if (client != null)
 		{
@@ -93,9 +100,13 @@ public class ClientHandler extends Thread
 		}
 	}
 
+	
+	/*
+	 * Uses ObjectOutputStream to send an AuctionItem to the client. 
+	 * First sends the String "___Object___" to allow client to process
+	 */
 	public void sendItem(AuctionItem item)
 	{
-		// TODO Auto-generated method stub
 		sendMsg("___Object___");
 		try
 		{
@@ -111,13 +122,14 @@ public class ClientHandler extends Thread
 		}
 	}
 	
+	
+	/*
+	 * Uses ObjectOutputStream to send a String to the client. 
+	 */
 	public void sendMsg(String msg)
 	{
 		try
-		{
-//			output.writeUTF(msg);
-//			output.flush();
-			
+		{			
 			outstream.writeObject(msg);
 			outstream.flush();
 			outstream.reset();

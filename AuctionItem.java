@@ -1,8 +1,13 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/*
+ * Stores data about the Items for sale
+ */
 public class AuctionItem implements Serializable
 {
+	private static final long serialVersionUID = 1L;
+	
 	private String name;
 	private double reservePrice;
 	private double currentBid;
@@ -79,6 +84,9 @@ public class AuctionItem implements Serializable
 		return items.get(currentItem);
 	}
 	
+	/*
+	 * Returns the next Item in the list
+	 */
 	public static AuctionItem nextItem()
 	{
 		AuctionItem item = items.get(currentItem);

@@ -1,4 +1,7 @@
 
+/*
+ * Handles the countdown of the Auction time
+ */
 public class AuctionHandler extends Thread
 {
 	private AuctionServer server = null;
@@ -8,11 +11,15 @@ public class AuctionHandler extends Thread
 	{
 		this.server = server;
 	}
+	
 	public void stopThread()
 	{
 		runThread = false;
 	}
 	
+	/* 
+	 * If manageAuction returns true, call NewAuctionItem in server
+	 */
 	public void run()
 	{
 		boolean isComplete;
@@ -26,6 +33,9 @@ public class AuctionHandler extends Thread
 		}
 	}
 
+	/*
+	 * Sleep for a specified period of time. If it is interrupted return false
+	 */
 	public boolean manageAuctionTime(long time)
 	{
 		try
