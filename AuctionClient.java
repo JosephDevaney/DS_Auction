@@ -13,6 +13,8 @@ public class AuctionClient implements Runnable
 
 	private static final Object TIME_STR = "TIME";
 
+	private static final String HELP_STR = "HELP";
+
 	private Socket socket = null;
 	
 	private BufferedReader reader = null;
@@ -54,7 +56,7 @@ public class AuctionClient implements Runnable
 	 */
 	public void displayItemInfo()
 	{
-		System.out.println("Item " + curItem.getName() + " for auction");
+		System.out.println("Item '" + curItem.getName() + "' for auction");
 		System.out.println("Current bid: " + curItem.getCurrentBid());
 		System.out.println("Reserve Price: " + curItem.getReservePrice());
 	}
@@ -76,6 +78,14 @@ public class AuctionClient implements Runnable
 		System.out.println(msg);
 	}
 	
+	public void displayHelp()
+	{
+		System.out.println("Enter a number to make a bid");
+		System.out.println("Enter '" + EXIT_STR + "' to leave the auction");
+		System.out.println("Enter '" + TIME_STR + "' to get the remainingtTime");
+		System.out.println("Enter '" + HELP_STR + "' to get these instructions");
+		System.out.println("\n\n");
+	}
 	
 	/*
 	 * Create Socket and call joinAuction()
@@ -106,6 +116,8 @@ public class AuctionClient implements Runnable
 	 */
 	public void run()
 	{
+		cls();
+		displayHelp();
 		while(client != null)
 		{
 			try
@@ -125,6 +137,10 @@ public class AuctionClient implements Runnable
 				else if (message.equals(TIME_STR))
 				{
 					displayTime();
+				}
+				else if (message.equals(HELP_STR))
+				{
+					displayHelp();
 				}
 			}
 			catch (IOException e)

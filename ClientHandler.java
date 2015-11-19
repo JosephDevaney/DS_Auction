@@ -11,6 +11,7 @@ import java.net.Socket;
 public class ClientHandler extends Thread
 {
 	private static final String OBJECT_STR = "___Object___";
+	private static final String EXIT_STR = "LEAVE";
 	private AuctionServer server;
 	private Socket client;
 	
@@ -49,7 +50,7 @@ public class ClientHandler extends Thread
 		}
 	}
 	
-	/**
+	/*
 	 * Waits for data from the client
 	 */
 	public void run()
@@ -63,9 +64,10 @@ public class ClientHandler extends Thread
 			{
 				msg = input.readUTF();
 
-				if (msg.equals("LEAVE"))
+				if (msg.equals(EXIT_STR))
 				{
 					server.leaveAuction(this);
+					thread = null;
 				}
 				else
 				{
@@ -75,7 +77,7 @@ public class ClientHandler extends Thread
 			catch (IOException ioEx)
 			{
 				// TODO Auto-generated catch block
-//				ioEx.printStackTrace();
+				ioEx.printStackTrace();
 				server.leaveAuction(this);
 				thread = null;
 			}	

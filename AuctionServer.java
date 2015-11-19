@@ -73,7 +73,6 @@ public class AuctionServer implements Runnable
 	 * Accepts new connections from clients and passes this socket to addThread()
 	 * Once at two connections have been made, it starts the auction by getting an Item from the static list in AuctionItem
 	 * This gets sent to all clients
-	 * AuctionHandler gets created and the Thread is started for it.
 	 * If a client joins while the auction is underway send the current item to it
 	 */
 	public void run()
@@ -129,20 +128,31 @@ public class AuctionServer implements Runnable
 		if (curItem.getCurrentBid() >= curItem.getReservePrice())
 		{
 			curItem.setSold(true);
+			for (ClientHandler ch : clientList)
+			{
+				if (ch ==  curBidHolder)
+				{
+					ch.sendMsg("Congratulations! Your bid was successful for '" + curItem.getName() + "'\n\n");
+				}
+				else
+				{
+					ch.sendMsg("'" + curItem.getName() + "' has been sold to another user\n\n");
+				}
+			}
 		}
 		curItem = AuctionItem.nextItem();
 		if (curItem == null)
 		{
-			broadcastMsg("The Auction has concluded, thank you for participating");
+			broadcastMsg("The Auction has concluded, thank you for participating\n");
 		}
 		else if (clientList.size() < 2)
 		{
-			broadcastMsg("The Auction will resume when there are at least two people");
+			broadcastMsg("The Auction will resume when there are at least two people\n");
 		}
 		else
 		{
-			broadcastItem(curItem);
 			curItem.setStartTime(System.currentTimeMillis());
+			broadcastItem(curItem);
 			runTimer();
 		}
 	}
@@ -208,11 +218,11 @@ public class AuctionServer implements Runnable
 		{
 			if (ch == curBidHolder)
 			{
-				ch.sendMsg("Your bid is the current bid");
+				ch.sendMsg("Your bid is the current bid\n");
 			}
 			else
 			{
-				ch.sendMsg("There is a new bid");
+				ch.sendMsg("There is a new bid\n");
 			}
 		}
 		notifyAll();
@@ -238,6 +248,10 @@ public class AuctionServer implements Runnable
 		
 	}
 	
+	/*
+	 * Create Timer. After the specified time, newAuctionItem() will be called. 
+	 * This timer will be cancelled and created again if a new Bid is made
+	 */
 	private void runTimer()
 	{
 		timer = new Timer("Countdown");
