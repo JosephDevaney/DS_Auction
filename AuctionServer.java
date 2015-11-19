@@ -5,6 +5,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class AuctionServer implements Runnable
 {
@@ -14,11 +16,12 @@ public class AuctionServer implements Runnable
 	private static ArrayList<ClientHandler> clientList;
 	
 	private Thread thread = null;
-	private AuctionHandler aHandler;
+//	private AuctionHandler aHandler;
 
 	private boolean startAuction = true;
 	private AuctionItem curItem;
 	private ClientHandler curBidHolder = null;
+	private Timer timer;
 
 	
 	/**
@@ -29,6 +32,7 @@ public class AuctionServer implements Runnable
 	public AuctionServer()
 	{
 		clientList = new ArrayList<ClientHandler>();
+		
 		try
 		{
 			serverSock = new ServerSocket(port);
@@ -94,13 +98,15 @@ public class AuctionServer implements Runnable
 				curItem.setStartTime(System.currentTimeMillis());
 				broadcastItem(curItem);
 				
-				aHandler = new AuctionHandler(this);
-				aHandler.start();
+//				aHandler = new AuctionHandler(this);
+//				aHandler.start();
+				runTimer();
 				startAuction = false;
 			}
 			else if (!startAuction)
 			{
 				clientList.get(clientList.size() - 1).sendItem(curItem);
+				System.out.println("Adding user after 2");
 			}
 		}
 	}
@@ -129,17 +135,27 @@ public class AuctionServer implements Runnable
 			curItem.setSold(true);
 		}
 		curItem = AuctionItem.nextItem();
-		curItem.setStartTime(System.currentTimeMillis());
-		if (curItem != null)
+		if (curItem == null)
 		{
-			broadcastItem(curItem);
+			broadcastMsg("The Auction has concluded, thank you for participating");
+		}
+		else if (clientList.size() < 2)
+		{
+			broadcastMsg("The Auction will resume when there are at least two people");
 		}
 		else
 		{
-			for (ClientHandler ch : clientList)
-			{
-				ch.sendMsg("The Auction has concluded, thank you for participating");
-			}
+			broadcastItem(curItem);
+			curItem.setStartTime(System.currentTimeMillis());
+			runTimer();
+		}
+	}
+	
+	public synchronized void broadcastMsg(String msg)
+	{
+		for (ClientHandler ch : clientList)
+		{
+			ch.sendMsg(msg);
 		}
 	}
 	
@@ -166,8 +182,8 @@ public class AuctionServer implements Runnable
 		
 		if (clientList.size() < 2)
 		{
-			aHandler.stopThread();
-			aHandler.interrupt();
+//			aHandler.stopThread();
+//			aHandler.interrupt();
 			startAuction = true;
 		}
 		
@@ -222,9 +238,25 @@ public class AuctionServer implements Runnable
 			curBidHolder = ch;
 			broadcastBidInfo();
 			broadcastItem(curItem);
-			aHandler.interrupt();
+//			aHandler.interrupt();
+			timer.cancel();
+			runTimer();
 		}
 		
+	}
+	
+	private void runTimer()
+	{
+		timer = new Timer("Countdown");
+		timer.schedule(new TimerTask() {
+			
+			@Override
+			public void run()
+			{
+				// TODO Auto-generated method stub
+				newAuctionItem();
+			}
+		}, 6000L);
 	}
 	
 	

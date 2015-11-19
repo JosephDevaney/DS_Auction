@@ -93,11 +93,14 @@ public class AuctionItem implements Serializable
 		if (item.isSold())
 		{
 			soldItems.add(items.remove(currentItem));
+			
 		}
 		else
 		{
-			currentItem = (currentItem + 1) % items.size();
+			currentItem++;
 		}
+		
+		currentItem = (currentItem >= items.size()) ? items.size() > 0 ? currentItem % items.size() : 0 : items.size() - 1;
 		
 		return items.size() > 0 ? items.get(currentItem) : null;
 	}
