@@ -10,6 +10,7 @@ import java.net.Socket;
  */
 public class ClientHandler extends Thread
 {
+	private static final String OBJECT_STR = "___Object___";
 	private AuctionServer server;
 	private Socket client;
 	
@@ -107,7 +108,7 @@ public class ClientHandler extends Thread
 	 */
 	public void sendItem(AuctionItem item)
 	{
-		sendMsg("___Object___");
+		sendMsg(OBJECT_STR);
 		try
 		{
 			outstream.writeObject(item);

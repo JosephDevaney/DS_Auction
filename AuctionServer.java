@@ -10,13 +10,12 @@ import java.util.TimerTask;
 
 public class AuctionServer implements Runnable
 {
+	private static final long TIMER_LEN = 60000;
 	private static ServerSocket serverSock;
-	private static final int port = 1234;
 	
 	private static ArrayList<ClientHandler> clientList;
 	
 	private Thread thread = null;
-//	private AuctionHandler aHandler;
 
 	private boolean startAuction = true;
 	private AuctionItem curItem;
@@ -29,7 +28,7 @@ public class AuctionServer implements Runnable
 	 * Initialises List of clienthandler objects
 	 * Establishes Socket and calls start()
 	 */
-	public AuctionServer()
+	public AuctionServer(int port)
 	{
 		clientList = new ArrayList<ClientHandler>();
 		
@@ -98,15 +97,12 @@ public class AuctionServer implements Runnable
 				curItem.setStartTime(System.currentTimeMillis());
 				broadcastItem(curItem);
 				
-//				aHandler = new AuctionHandler(this);
-//				aHandler.start();
 				runTimer();
 				startAuction = false;
 			}
 			else if (!startAuction)
 			{
 				clientList.get(clientList.size() - 1).sendItem(curItem);
-				System.out.println("Adding user after 2");
 			}
 		}
 	}
@@ -182,8 +178,6 @@ public class AuctionServer implements Runnable
 		
 		if (clientList.size() < 2)
 		{
-//			aHandler.stopThread();
-//			aHandler.interrupt();
 			startAuction = true;
 		}
 		
@@ -238,7 +232,6 @@ public class AuctionServer implements Runnable
 			curBidHolder = ch;
 			broadcastBidInfo();
 			broadcastItem(curItem);
-//			aHandler.interrupt();
 			timer.cancel();
 			runTimer();
 		}
@@ -256,7 +249,7 @@ public class AuctionServer implements Runnable
 				// TODO Auto-generated method stub
 				newAuctionItem();
 			}
-		}, 6000L);
+		}, TIMER_LEN);
 	}
 	
 	
@@ -294,9 +287,16 @@ public class AuctionServer implements Runnable
 	 */
 	public static void main(String[] args) throws IOException
 	{
-		loadData();
-
-		new AuctionServer();
+		if (args.length != 1)
+		{
+			System.out.println("Usage: java AuctionServer port");
+		}
+		else
+		{
+			loadData();
+	
+			new AuctionServer(Integer.parseInt(args[0]));
+		}
 	}
 
 }

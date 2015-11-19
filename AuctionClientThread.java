@@ -8,6 +8,8 @@ import java.net.Socket;
  */
 public class AuctionClientThread extends Thread
 {
+	private static final String OBJECT_STR = "___Object___";
+
 	private Socket socket;
 	
 	private ObjectInputStream inStream;
@@ -83,7 +85,7 @@ public class AuctionClientThread extends Thread
 			{
 				message = (String) inStream.readObject();
 				
-				if (message.equals("___Object___"))
+				if (message.equals(OBJECT_STR))
 				{
 					getItem();
 				}

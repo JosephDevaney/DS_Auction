@@ -100,7 +100,9 @@ public class AuctionItem implements Serializable
 			currentItem++;
 		}
 		
-		currentItem = (currentItem >= items.size()) ? items.size() > 0 ? currentItem % items.size() : 0 : items.size() - 1;
+		currentItem = (currentItem >= items.size()) ? 
+				((items.size() > 0) ? currentItem % items.size() : 0) 
+				: items.size() - 1;
 		
 		return items.size() > 0 ? items.get(currentItem) : null;
 	}

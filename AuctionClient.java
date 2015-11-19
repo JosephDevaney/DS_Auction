@@ -2,14 +2,17 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
 public class AuctionClient implements Runnable
 {
-	private static InetAddress host;
-	private static final int port = 1234;
+	private static final long BID_TIME_SECS = 60;
+
+	private static final String EXIT_STR = "LEAVE";
+
+	private static final Object TIME_STR = "TIME";
+
 	private Socket socket = null;
 	
 	private BufferedReader reader = null;
@@ -64,7 +67,7 @@ public class AuctionClient implements Runnable
 	{
 		if (curItem != null)
 		{
-			System.out.println("\nThere is " + (60 - ((System.currentTimeMillis() - curItem.getStartTime()) / 1000)) + " seconds left to bid\n");
+			System.out.println("\nThere is " + (BID_TIME_SECS - ((System.currentTimeMillis() - curItem.getStartTime()) / 1000)) + " seconds left to bid\n");
 		}
 	}
 	
@@ -77,11 +80,10 @@ public class AuctionClient implements Runnable
 	/*
 	 * Create Socket and call joinAuction()
 	 */
-	public AuctionClient()
+	public AuctionClient(String host, int port)
 	{
 		try
 		{
-			host = InetAddress.getLocalHost();
 			socket = new Socket(host, port);
 			joinAuction();
 		} 
@@ -110,17 +112,17 @@ public class AuctionClient implements Runnable
 			{
 				String message = reader.readLine();
 
-				if (message.equals("LEAVE") || message.matches("-?\\d+(\\.\\d+)?"))
+				if (message.equals(EXIT_STR) || message.matches("-?\\d+(\\.\\d+)?"))
 				{
 					output.writeUTF(message);
 					output.flush();
-					if (message.equals("LEAVE"))
+					if (message.equals(EXIT_STR))
 					{
 						leaveAuction();
 						break;
 					}
 				}
-				else if (message.equals("TIME"))
+				else if (message.equals(TIME_STR))
 				{
 					displayTime();
 				}
@@ -195,6 +197,13 @@ public class AuctionClient implements Runnable
 
 	public static void main(String[] args)
 	{
-		new AuctionClient();
+		if (args.length != 2)
+		{
+			System.out.println("Usage: java AuctionClient host port");
+		}
+		else
+		{
+			new AuctionClient(args[0], Integer.parseInt(args[1]));
+		}
 	}
 }
